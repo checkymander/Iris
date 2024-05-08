@@ -63,7 +63,7 @@ class MythicRPCSpec(BaseToolSpec):
             return False
         
     def _debug_print(self, message):
-        if self.debug:
+        if self._debug:
             print(message)
     
     async def _check_valid_id(self, val) -> str:
