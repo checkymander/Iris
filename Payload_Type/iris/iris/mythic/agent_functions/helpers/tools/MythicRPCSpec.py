@@ -4,7 +4,7 @@ from mythic_container.MythicRPC import *
 import json
 
 class MythicRPCSpec(BaseToolSpec):
-    spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id"]
+    spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id", "get_scary_process"]
     _scope: str = None
     _operation_id: int = 0
 
@@ -65,14 +65,25 @@ class MythicRPCSpec(BaseToolSpec):
             except:
                 return ""
         return ""
-    
-    async def Processlist(self, agent_callback_id:str):
-        print(f"Executing Ps on  {agent_callback_id}")
-        print(f"Agent ID: {agent_callback_id}")
-        PSresponse = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=agent_callback_id, CommandName=ps, Params=""))
-        print(f"Analyzing Process list for Interesting Process")
-        print(PSresponse)
-        MythicRPCResponseSearchMessageResponse()
-   #we need the Callbackto run it on 
-   #run ps
-   #reiview
+
+    async def get_scary_process(self, agent_callback_id:str):
+        """get a process list on the callback and search for dangerous process such as MsMpEng.exe"""
+        print(f"Executing on  {agent_callback_id}")
+        #response = await SendMythicRPCTaskCreate(SendMythicRPCProcessSearch()
+        process_search_query = {"search": "MsMpEng.exe"}
+        response = await rpc.SendMythicRPCProcessSearch(json.dumps(process_search_query))
+        
+        response_json = json.loads(response)
+        if response_json["status"] == "error":
+            print(f"Error searching for processes: {response_json['error']}")
+        else:
+            # Check if any processes match the query
+            process_list = response_json["response"]["responses"]
+            if process_list:
+                print("Found processes with name 'MsMpEng.exe':")
+                for process in process_list:
+                    print(f"PID: {process['pid']}, Name: {process['name']}")
+                # Perform further actions if needed
+            else:
+                print("No processes found with name 'MsMpEng.exe'")
+
