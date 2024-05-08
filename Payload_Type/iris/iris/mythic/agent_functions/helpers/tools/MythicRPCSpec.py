@@ -75,6 +75,7 @@ class MythicRPCSpec(BaseToolSpec):
             try:
                 self._debug_print(f"Value is a display callback")
                 id = await self.map_callback_number_to_agent_callback_id(callback=val)
+                self._debug_print(f"Value returned is: {id}")
                 if self._is_valid_uuid(id):
                     self._debug_print(f"Found valid agent UUID for callback {val} - UUID: {id}")
                     return id
