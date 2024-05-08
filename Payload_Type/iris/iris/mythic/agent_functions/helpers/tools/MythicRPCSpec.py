@@ -4,7 +4,7 @@ from mythic_container.MythicRPC import *
 import json
 
 class MythicRPCSpec(BaseToolSpec):
-    spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes"]
+    spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents"] 
     _scope: str = None
     _operation_id: int = 0
 
@@ -68,8 +68,6 @@ class MythicRPCSpec(BaseToolSpec):
 
     async def get_dangerous_processes(self, Host:str):
         """get a process list on the callback and search for dangerous processes such as MsMpEng.exe"""
-        #response = await SendMythicRPCTaskCreate(SendMythicRPCProcessSearch()
-        process_search_query = {"search": "MsMpEng.exe"}
         response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
         if response.Success:
                 print("Found processes with name 'MsMpEng.exe':")
@@ -77,3 +75,21 @@ class MythicRPCSpec(BaseToolSpec):
                     if x.Name == "MsMpEng.exe":
                         print(f"PID: {x.ProcessID}, Name: {x.Name}")
                     return "Found MsMpeng.exe watch it"
+
+    async def get_file_contents(self, filename: str) -> str:
+        """gets the contents of a file for summarization can be searched by either UUID or filename"""
+        if self._is_valid_uuid(filename):
+            id = filename
+        else:
+            response = await SendMythicRPCFileSearch(MythicRPCFileSearchMessage(Filename=filename))
+            if response.Success:
+                id = response.Files[0].AgentFileId
+            else:
+                return "File Not Found"
+            
+        file_response = await SendMythicRPCFileGetContent(MythicRPCFileGetContentMessage(AgentFileId=id))
+
+        if file_response.Success:
+            return base64.b64decode(file_response.Content)
+        else:
+            return "File Not Found"
