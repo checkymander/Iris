@@ -35,109 +35,26 @@ class Iris(PayloadType):
     ]
     build_parameters = [
         BuildParameter(
-            name="LLM",
-            parameter_type=BuildParameterType.ChooseOne,
-            choices=["TheBloke/neural-chat-7B-v3-3-GGUF", "bartowski/WhiteRabbitNeo-7B-v1.5a-GGUF"],
-            default_value="bartowski/WhiteRabbitNeo-7B-v1.5a-GGUF",
-            description="The base LLM model to use"
+            name="server",
+            parameter_type=BuildParameterType.String,
+            default_value="http://localhost:11434",
+            description="OpenAI Compatible LLM Server"
         ),
         BuildParameter(
-            name="Embedding",
-            parameter_type=BuildParameterType.ChooseOne,
-            choices=["TaylorAI/gte-tiny"],
-            default_value="TaylorAI/gte-tiny",
-            description="The embedding model to use"
+            name="verbose",
+            parameter_type=BuildParameterType.Boolean,
+            default_value=False,
+            description="Enable verbose output in Docker container"
         ),
         BuildParameter(
-            name="Reranker",
-            parameter_type=BuildParameterType.ChooseOne,
-            choices=["BAAI/bge-reranker-base", "BAAI/bge-reranker-v2-m3"],
-            default_value="BAAI/bge-reranker-v2-m3",
-            description="The reranker model"
+            name="model",
+            parameter_type=BuildParameterType.String,
+            default_value="llama3",
+            description="The model to use"
         ),
     ]
     c2_profiles = []
-
-    def get_embeddings(self, embedding_model):
-        embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
-        return embeddings
-
-    def get_reranker(self, reranking_model, device):
-        rerank_tokenizer = AutoTokenizer.from_pretrained(reranking_model)
-        rerank_model = AutoModelForSequenceClassification.from_pretrained(reranking_model).to(device)
-        return (rerank_tokenizer, rerank_model)
-
-
-
     async def build(self) -> BuildResponse:
-        # model_map = {
-        #     "TheBloke/neural-chat-7B-v3-3-GGUF": "neural-chat-7b-v3-3.Q5_K_M.gguf",
-        #     "bartowski/WhiteRabbitNeo-7B-v1.5a-GGUF": "WhiteRabbitNeo-7B-v1.5a-Q6_K.gguf",
-        # }
-
-        # # Check if path exists, if no download it.
-        # print("Downloading Standard Model")
-        # try:
-        #     llm_model_path = hf_hub_download(self.get_parameter("LLM"), filename=model_map[self.get_parameter("LLM")], local_files_only=True)
-        # except Exception as e:
-        #     llm_model_path = hf_hub_download(self.get_parameter("LLM"), filename=model_map[self.get_parameter("LLM")])
-        
-
-        # await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
-        #         PayloadUUID=self.uuid,
-        #         StepName="Download LLM",
-        #         StepStdout="Successfully downloaded {}".format(self.get_parameter("LLM"),),
-        #         StepSuccess=True
-        #     )) 
-        # print("Downloading Embedding Model")
-        # try:
-        #     embeddings = self.get_embeddings(self.get_parameter("Embedding"))
-        #     await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
-        #         PayloadUUID=self.uuid,
-        #         StepName="Download Embeddings",
-        #         StepStdout="Succesfully downloaded {}".format(self.get_parameter("Embedding"),),
-        #         StepSuccess=True
-        #     )) 
-        # except Exception as e:
-        #     print(e)
-        #     await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
-        #         PayloadUUID=self.uuid,
-        #         StepName="Download Embeddings",
-        #         StepStdout="Failed to download {}".format(self.get_parameter("Embedding"),),
-        #         StepSuccess=False
-        #     )) 
-        #     print("Failed to get embedding model.")
-        #     return
-
-        # print("Downloading Reranker Model")
-        # try:
-        #     if torch.cuda.is_available():
-        #     # traditional Nvidia cuda GPUs
-        #         device = torch.device("cuda:0")
-        #     elif torch.backends.mps.is_available():
-        #         # for macOS M1/M2s
-        #         device = torch.device("mps")
-        #     else:
-        #         device = torch.device("cpu")
-
-        #     (rerank_tokenizer, rerank_model) = self.get_reranker(self.get_parameter("Reranker"), device)
-        #     await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
-        #         PayloadUUID=self.uuid,
-        #         StepName="Download Reranker",
-        #         StepStdout="Successfully downloaded {}".format(self.get_parameter("Reranker"),),
-        #         StepSuccess=True
-        #     )) 
-        # except Exception as e:
-        #     print(e)
-        #     await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
-        #         PayloadUUID=self.uuid,
-        #         StepName="Download Reranker",
-        #         StepStdout="Failed to download {}".format(self.get_parameter("Reranker"),),
-        #         StepSuccess=False
-        #     )) 
-        #     print("Failed to get reranker")
-        #     return
-
         # this function gets called to create an instance of your payload
         resp = BuildResponse(status=BuildStatus.Success)
         ip = "127.0.0.1"

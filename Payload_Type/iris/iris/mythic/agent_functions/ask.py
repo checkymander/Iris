@@ -46,9 +46,10 @@ class AskCommand(CommandBase):
         )
         llama = Ollama(
             temperature=0,
-            verbose=True,
-            model='llama3',
-            base_url= "https://xbbwlp7h-11434.use.devtunnels.ms",
+            verbose=taskData.args.get_arg("verbose"),
+            model=taskData.args.get_arg("model"),
+            #base_url= "https://xbbwlp7h-11434.use.devtunnels.ms",
+            base_url=taskData.args.get_arg("server"),
             #base_url= "http://localhost:11434"
         )
 

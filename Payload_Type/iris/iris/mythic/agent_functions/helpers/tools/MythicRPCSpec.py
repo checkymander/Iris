@@ -33,7 +33,7 @@ class MythicRPCSpec(BaseToolSpec):
         response = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=id, CommandName=command, Params=params))
 
         if response.Success:
-            return "Task issued."
+            return f"Task {response.TaskID} started."
         else:
             return f"Failed to issue task: {response.Error}"
         
@@ -68,7 +68,6 @@ class MythicRPCSpec(BaseToolSpec):
     
     async def Processlist(self, agent_callback_id:str):
         print(f"Executing Ps on  {agent_callback_id}")
-        print(f"Parameters: {params}")
         print(f"Agent ID: {agent_callback_id}")
         PSresponse = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=agent_callback_id, CommandName=ps, Params=""))
         print(f"Analyzing Process list for Interesting Process")
