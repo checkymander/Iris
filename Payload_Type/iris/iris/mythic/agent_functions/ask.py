@@ -44,12 +44,21 @@ class AskCommand(CommandBase):
             TaskID=taskData.Task.ID,
             Success=True,
         )
+
+        for buildParam in taskData.BuildParameters:
+            if buildParam.Name == "server":
+                llm_server = buildParam.Value
+            if buildParam.Name == "model":
+                selected_model = buildParam.Value
+            if buildParam.Name == "verbose":
+                debug_output = buildParam.Value
+
         llama = Ollama(
             temperature=0,
-            verbose=taskData.args.get_arg("verbose"),
-            model=taskData.args.get_arg("model"),
+            verbose=debug_output,
+            model=selected_model,
             #base_url= "https://xbbwlp7h-11434.use.devtunnels.ms",
-            base_url=taskData.args.get_arg("server"),
+            base_url=llm_server,
             #base_url= "http://localhost:11434"
         )
 
