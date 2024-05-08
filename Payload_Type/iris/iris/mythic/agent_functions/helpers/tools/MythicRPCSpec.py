@@ -65,7 +65,7 @@ class MythicRPCSpec(BaseToolSpec):
         
     def _debug_print(self, function, message):
         if self._debug:
-            print(f"[{function} {message}]")
+            print(f"[{function}] {message}")
     
     async def _check_valid_id(self, val) -> str:
         self._debug_print("_check_valid_id", f"Checking if already a UUID")
