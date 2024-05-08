@@ -65,3 +65,15 @@ class MythicRPCSpec(BaseToolSpec):
             except:
                 return ""
         return ""
+    
+    async def Processlist(self, agent_callback_id:str):
+        print(f"Executing Ps on  {agent_callback_id}")
+        print(f"Parameters: {params}")
+        print(f"Agent ID: {agent_callback_id}")
+        PSresponse = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=agent_callback_id, CommandName=ps, Params=""))
+        print(f"Analyzing Process list for Interesting Process")
+        print(PSresponse)
+        MythicRPCResponseSearchMessageResponse()
+   #we need the Callbackto run it on 
+   #run ps
+   #reiview
