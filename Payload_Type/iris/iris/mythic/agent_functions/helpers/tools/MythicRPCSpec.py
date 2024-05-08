@@ -26,7 +26,7 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("get_callback_by_uuid_async", f"Found callback!")
             return response.Results[0].to_json()
         else:
-            self._debug_print("get_callback_by_uuid_async", f"Callback not found!")
+            self._debug_print("get_callback_by_uuid_async", f"Callback not found: {response.Error}")
             return json.dumps({"message":"Callback Not Found"})
     
     async def task_callback(self, agent_callback_id:str, command:str, params: str):
@@ -53,7 +53,7 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("map_callback_number_to_agent_callback_id", f"Success! {len(response.Results)}")
             return response.Results[0].AgentCallbackID
         else:
-            self._debug_print("map_callback_number_to_agent_callback_id", f"No Callback Found")
+            self._debug_print("map_callback_number_to_agent_callback_id", f"No Callback Found {response.Error}")
             return "Agent ID not found"
     
     def _is_valid_uuid(self, val):
@@ -105,6 +105,7 @@ class MythicRPCSpec(BaseToolSpec):
             if response.Success:
                 id = response.Files[0].AgentFileId
             else:
+                self._debug_print("get_file_contents", f"Failed getting file contents: {response.Error}")
                 return "File Not Found"
         self._debug_print("get_file_contents", f"Getting file contents for ID: {id}")
         file_response = await SendMythicRPCFileGetContent(MythicRPCFileGetContentMessage(AgentFileId=id))
@@ -113,5 +114,5 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("get_file_contents", f"Successfully found file of length: {len(base64.b64decode(file_response.Content))}")
             return base64.b64decode(file_response.Content)
         else:
-            self._debug_print("get_file_contents", f"File Not Found")
+            self._debug_print("get_file_contents", f"File Not Found: {file_response.Error}")
             return "File Not Found"
