@@ -66,12 +66,11 @@ class MythicRPCSpec(BaseToolSpec):
                 return ""
         return ""
 
-    async def get_dangerous_processes(self, agent_callback_id:str):
+    async def get_dangerous_processes(self, Host:str):
         """get a process list on the callback and search for dangerous processes such as MsMpEng.exe"""
-        print(f"Executing on  {agent_callback_id}")
         #response = await SendMythicRPCTaskCreate(SendMythicRPCProcessSearch()
         process_search_query = {"search": "MsMpEng.exe"}
-        response = await SendMythicRPCProcessSearch(json.dumps(process_search_query)) 
+        response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
         response_json = json.loads(response)
         if response_json["status"] == "error":
             print(f"Error searching for processes: {response_json['error']}")
@@ -85,3 +84,4 @@ class MythicRPCSpec(BaseToolSpec):
                 # Perform further actions if needed
             else:
                 print("No processes found with name 'MsMpEng.exe'")
+
