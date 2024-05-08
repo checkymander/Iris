@@ -3,6 +3,8 @@ from mythic_container.MythicRPC import *
 from .helpers.tools.MythicRPCSpec import MythicRPCSpec
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent import ReActAgent
+from llama_index.core.llms import ChatMessage, MessageRole
+from llama_index.core import ChatPromptTemplate
 
 class AskArguments(TaskArguments):
     def __init__(self, command_line, **kwargs):
@@ -62,6 +64,18 @@ class AskCommand(CommandBase):
             #base_url= "http://localhost:11434"
         )
 
+
+        chat_text_qa_msgs = [
+            ChatMessage(
+                role=MessageRole.SYSTEM,
+                content=(
+                    "Your are a helpful AI assistant designed to help answer questions. Please be as thorough as possible, when possible format the output as a list"
+                ),
+            ),
+            ChatMessage(role=MessageRole.USER, content=taskData.args.get_arg("question")),
+        ]
+        text_qa_template = ChatPromptTemplate(chat_text_qa_msgs)
+
         # tool = FunctionTool.from_defaults(
         #     get_callback_by_uuid,
         #     async_fn=get_callback_by_uuid_async,
@@ -72,7 +86,8 @@ class AskCommand(CommandBase):
 
         mythic_spec = MythicRPCSpec(scope=taskData.Callback.AgentCallbackID, operation_id=taskData.Callback.OperationID)
         agent = ReActAgent.from_tools(mythic_spec.to_tool_list(), llm=llama, verbose=True)
-        chat_response = await agent.achat(taskData.args.get_arg("question"))
+        #chat_response = await agent.achat(taskData.args.get_arg("question"))
+        chat_response = await agent.aquery(text_qa_template)
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
             TaskID=taskData.Task.ID,
             Response=str(chat_response)

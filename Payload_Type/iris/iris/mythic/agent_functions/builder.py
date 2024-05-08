@@ -49,9 +49,15 @@ class Iris(PayloadType):
         BuildParameter(
             name="model",
             parameter_type=BuildParameterType.String,
-            default_value="llama3",
+            default_value="llama3:instruct",
             description="The model to use"
         ),
+        BuildParameter(
+            name="prompt",
+            parameter_type=BuildParameterType.String,
+            default_value="""
+"""
+        )
     ]
     c2_profiles = []
     async def build(self) -> BuildResponse:
