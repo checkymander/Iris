@@ -47,7 +47,7 @@ class MythicRPCSpec(BaseToolSpec):
         self._debug_print("map_callback_number_to_agent_callback_id", f"Checking for callback id: {callback}")
         self._debug_print("map_callback_number_to_agent_callback_id", f"Agent scope: {self._scope}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
-                                                        SearchCallbackDisplayID=callback)
+                                                        SearchCallbackDisplayID=int(callback))
         response = await SendMythicRPCCallbackSearch(search_message)
         if response.Success:
             self._debug_print("map_callback_number_to_agent_callback_id", f"Success! {len(response.Results)}")
