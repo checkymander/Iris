@@ -75,5 +75,5 @@ class MythicRPCSpec(BaseToolSpec):
                 print("Found processes with name 'MsMpEng.exe':")
                 for x in response.Processes:
                     if x.Name == "MsMpEng.exe":
-                        print(f"PID: {x.PID}, Name: {x.Name}")
-                    return x.PID, x.Name
+                        print(f"PID: {x.ProcessID}, Name: {x.Name}")
+                    return "Found MsMpeng.exe watch it"
