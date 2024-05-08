@@ -113,13 +113,14 @@ Answer: Sorry, I cannot answer your query.
 ## Additional Rules
 - The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
+- Do not get task output or file contents unless specifically requested by the human
 
 ## Current Conversation
 Below is the current conversation consisting of interleaving human and assistant messages.
 
 """
         react_system_prompt = PromptTemplate(react_system_header_str)
-        mythic_spec = MythicRPCSpec(scope=taskData.Callback.AgentCallbackID, operation_id=taskData.Callback.OperationID)
+        mythic_spec = MythicRPCSpec(scope=taskData.Callback.AgentCallbackID, operation_id=taskData.Callback.OperationID,debug=debug_output)
         agent = ReActAgent.from_tools(mythic_spec.to_tool_list(), llm=llama, verbose=True)
         agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
         agent.reset()
