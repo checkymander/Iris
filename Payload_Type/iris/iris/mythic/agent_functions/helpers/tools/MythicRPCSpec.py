@@ -71,17 +71,9 @@ class MythicRPCSpec(BaseToolSpec):
         #response = await SendMythicRPCTaskCreate(SendMythicRPCProcessSearch()
         process_search_query = {"search": "MsMpEng.exe"}
         response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
-        response_json = json.loads(response)
-        if response_json["status"] == "error":
-            print(f"Error searching for processes: {response_json['error']}")
-        else:
-            # Check if any processes match the query
-            process_list = response_json["response"]["responses"]
-            if process_list:
+        if response.Success:
                 print("Found processes with name 'MsMpEng.exe':")
-                for process in process_list:
-                    print(f"PID: {process['pid']}, Name: {process['name']}")
-                # Perform further actions if needed
-            else:
-                print("No processes found with name 'MsMpEng.exe'")
-
+                for x in response.Processes:
+                    if x.Name == "MsMpEng.exe":
+                        print(f"PID: {x.PID}, Name: {x.Name}")
+                    return x.PID, x.Name
