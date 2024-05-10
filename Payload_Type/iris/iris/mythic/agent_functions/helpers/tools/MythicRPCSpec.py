@@ -14,15 +14,15 @@ class MythicRPCSpec(BaseToolSpec):
         self._operation_id: int = operation_id
         self._debug: bool = debug
 
-    async def get_callback_by_uuid_async(self, agent_callback_id: str) -> str:
+    async def get_callback_by_uuid_async(self, callback_id: str) -> str:
         """Finds a specific callback by its agent_callback_id (UUID) returns information about the callback
 
         Input: 
-            agent_callback_id - Should be either a UUID or an int ID value specified by the user
+            callback_id - The callback ID of the agent
 
         Output: Detailed information about the found callback or an error
         """
-        id = await self._check_valid_id(agent_callback_id)
+        id = await self._check_valid_id(callback_id)
         self._debug_print("get_callback_by_uuid_async", f"Checking for callback id: {id}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
                                                         SearchCallbackUUID=id)
@@ -40,7 +40,7 @@ class MythicRPCSpec(BaseToolSpec):
         
         Input:
             command - should be the name of a command
-            agent_callback_id - Should be either a UUID or an int value specified by the user
+            callback_id - The callback ID of the agent
             params - json string of parameter names and values
             
         Output: Success or Failure"""
