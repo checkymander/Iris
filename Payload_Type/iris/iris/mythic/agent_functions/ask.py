@@ -88,7 +88,9 @@ Action Input: the input to the tool, in a JSON format representing the kwargs (e
 
 Please ALWAYS start with a Thought.
 
-Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}.
+Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
+
+Action Input should only use information the user provided, or information retrieved from other tools
 
 If this format is used, the user will respond in the following format:
 
