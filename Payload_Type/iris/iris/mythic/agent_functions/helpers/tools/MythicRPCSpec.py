@@ -136,8 +136,7 @@ class MythicRPCSpec(BaseToolSpec):
                 Filename - The name of the file or UUID to get the contents of
 
             Output:
-                The Contents of the file
-        """
+                The Contents of the file"""
         if self._is_valid_uuid(filename):
             id = filename
         else:
