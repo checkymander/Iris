@@ -2,6 +2,7 @@ from llama_index.core.tools.tool_spec.base import BaseToolSpec
 from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
 import json
+import re
 
 class MythicRPCSpec(BaseToolSpec):
     spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents"] 
@@ -89,14 +90,21 @@ class MythicRPCSpec(BaseToolSpec):
     async def get_dangerous_processes(self, Host:str):
         """get a process list on the callback and search for dangerous processes such as MsMpEng and cmd"""
         response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
+        dangerous_processes = ["cmd(.exe)?", "msmpeng(.exe)?"]
+        found_dangerous = []
         if response.Success:
-                print("Found processes with name 'MsMpEng.exe':")
                 for x in response.Processes:
-                    if x.Name == "MsMpEng":
-                        print(f"PID: {x.ProcessID}, Name: {x.Name}")
-                    elif x.Name == "cmd":
-                        print(f"Potential suspicious process found: PID: {x.ProcessID}, Name: {x.Name}")
-                    return "Found bad processes watch it"
+                    self._debug_print("get_dangerous_processes", f"Testing {x.Name}")
+                    for y in dangerous_processes:
+                        if re.match(y,x):
+                            found_dangerous.append({x.ProcessID,x.Name})
+                            self._debug_print("get_dangerous_processes", f"{x.Name} is Dangerous")
+                if len(found_dangerous) > 0:
+                    return json.dumps(found_dangerous)
+                else:
+                    return "No Dangerous Processes Identified!"
+        else:
+            return f"Error: {response.Error}"
 
     async def get_file_contents(self, filename: str) -> str:
         """gets the contents of a file for summarization can be searched by either UUID or filename"""
