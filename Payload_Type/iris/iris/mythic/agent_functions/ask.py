@@ -63,71 +63,71 @@ class AskCommand(CommandBase):
             #base_url= "http://localhost:11434"
         )
 
-#         react_system_header_str = """\
+        react_system_header_str = """\
 
-# You are designed to help with a variety of tasks, from answering questions \
-#     to providing summaries to other types of analyses.
+You are designed to help with a variety of tasks, from answering questions \
+    to providing summaries to other types of analyses.
 
-# ## Tools
-# You have access to a wide variety of tools. You are responsible for using
-# the tools in any sequence you deem appropriate to complete the task at hand.
-# This may require breaking the task into subtasks and using different tools
-# to complete each subtask.
+## Tools
+You have access to a wide variety of tools. You are responsible for using
+the tools in any sequence you deem appropriate to complete the task at hand.
+This may require breaking the task into subtasks and using different tools
+to complete each subtask.
 
-# You have access to the following tools:
-# {tool_desc}
+You have access to the following tools:
+{tool_desc}
 
-# ## Output Format
-# To answer the question, please use the following format.
+## Output Format
+To answer the question, please use the following format.
 
-# ```
-# Thought: I need to use a tool to help me answer the question.
-# Action: tool name (one of {tool_names}) if using a tool.
-# Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
-# ```
+```
+Thought: I need to use a tool to help me answer the question.
+Action: tool name (one of {tool_names}) if using a tool.
+Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
+```
 
-# Please ALWAYS start with a Thought.
+Please ALWAYS start with a Thought.
 
-# Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
+Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
 
-# If you don't have the right information for a tools input, ask the user, don't make it up.
+If you don't have the right information for a tools input, ask the user, don't make it up.
 
-# If this format is used, the user will respond in the following format:
+If this format is used, the user will respond in the following format:
 
-# ```
-# Observation: tool response
-# ```
+```
+Observation: tool response
+```
 
-# You should run the minimum number of tools until you have enough information to answer the question or an error is 
-# thrown by a tool you need to use. At that point, you MUST respond in the one of the following two formats:
+You should run the minimum number of tools until you have enough information to answer the question or an error is 
+thrown by a tool you need to use. At that point, you MUST respond in the one of the following two formats:
 
-# ```
-# Thought: I can answer without using any more tools.
-# Answer: [your answer here]
-# ```
+```
+Thought: I can answer without using any more tools.
+Answer: [your answer here]
+```
 
-# ```
-# Thought: I cannot answer the question with the provided tools.
-# Answer: [A summary of the tool name that failed and what error was returned]
-# ```
+```
+Thought: I cannot answer the question with the provided tools.
+Answer: [A summary of the tool name that failed and what error was returned]
+```
 
-# ## Additional Rules
-# - The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
-# - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
-# - Do not get task output or file contents unless specifically requested by the human
-# - Stop running tools on an error and let the user know
-# - All Agent ID's should be in a UUID format provided by either the user or mapped via map_callback_number_to_agent_callback_id
-# - Callback and Agent can be used interchangeably and refers to agent_callback_id
+## Additional Rules
+- The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
+- You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
+- Do not get task output or file contents unless specifically requested by the human
+- Stop running tools on an error and let the user know
+- All Agent ID's should be in a UUID format provided by either the user or mapped via map_callback_number_to_agent_callback_id
+- Callback and Agent can be used interchangeably and refers to agent_callback_id
 
-# ## Current Conversation
-# Below is the current conversation consisting of interleaving human and assistant messages.
+## Current Conversation
+Below is the current conversation consisting of interleaving human and assistant messages.
 
-# """
-        # react_system_prompt = PromptTemplate(react_system_header_str)
+"""
+        react_system_prompt = PromptTemplate(react_system_header_str)
         mythic_spec = MythicRPCSpec(scope=taskData.Callback.AgentCallbackID, operation_id=taskData.Callback.OperationID,debug=debug_output)
         agent = ReActAgent.from_tools(mythic_spec.to_tool_list(), llm=llama, verbose=True)
-        # agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
-        # agent.reset()
+        agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
+        agent.reset()
         chat_response = await agent.achat(taskData.args.get_arg("question"))
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
             TaskID=taskData.Task.ID,
