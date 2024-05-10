@@ -87,14 +87,16 @@ class MythicRPCSpec(BaseToolSpec):
         return ""
 
     async def get_dangerous_processes(self, Host:str):
-        """get a process list on the callback and search for dangerous processes such as MsMpEng.exe"""
+        """get a process list on the callback and search for dangerous processes such as MsMpEng and cmd"""
         response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
         if response.Success:
                 print("Found processes with name 'MsMpEng.exe':")
                 for x in response.Processes:
-                    if x.Name == "MsMpEng.exe":
+                    if x.Name == "MsMpEng":
                         print(f"PID: {x.ProcessID}, Name: {x.Name}")
-                    return "Found MsMpeng.exe watch it"
+                    elif x.Name == "cmd":
+                        print(f"Potential suspicious process found: PID: {x.ProcessID}, Name: {x.Name}")
+                    return "Found bad processes watch it"
 
     async def get_file_contents(self, filename: str) -> str:
         """gets the contents of a file for summarization can be searched by either UUID or filename"""
