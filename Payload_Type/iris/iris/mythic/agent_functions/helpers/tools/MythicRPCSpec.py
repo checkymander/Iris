@@ -5,7 +5,7 @@ import json
 import re
 
 class MythicRPCSpec(BaseToolSpec):
-    spec_functions = ["get_callback_by_uuid_async", "execute_task_on_agent", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents"] 
+    spec_functions = ["get_callback_by_uuid", "execute_task_on_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents", "get_task_output"] 
     _scope: str = None
     _operation_id: int = 0
 
@@ -14,8 +14,8 @@ class MythicRPCSpec(BaseToolSpec):
         self._operation_id: int = operation_id
         self._debug: bool = debug
 
-    async def get_callback_by_uuid_async(self, callback_id: str) -> str:
-        """Finds a specific callback by its callback ID returns information about the callback
+    async def get_callback_by_uuid(self, callback_id: str) -> str:
+        """Returns information on a specified c2 callback by its ID
 
         Input: 
             callback_id - The callback ID of the agent
@@ -23,19 +23,19 @@ class MythicRPCSpec(BaseToolSpec):
         Output: Detailed information about the found callback or an error
         """
         id = await self._check_valid_id(callback_id)
-        self._debug_print("get_callback_by_uuid_async", f"Checking for callback id: {id}")
+        self._debug_print("get_callback_by_uuid", f"Checking for callback id: {id}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
                                                         SearchCallbackUUID=id)
         response = await SendMythicRPCCallbackSearch(search_message)
 
         if response.Success:
-            self._debug_print("get_callback_by_uuid_async", f"Found callback!")
+            self._debug_print("get_callback_by_uuid", f"Found callback!")
             return response.Results[0].to_json()
         else:
-            self._debug_print("get_callback_by_uuid_async", f"Callback not found: {response.Error}")
-            return json.dumps({"message":"Callback Not Found"})
+            self._debug_print("get_callback_by_uuid", f"Callback not found: {response.Error}")
+            return "Call back not found."
     
-    async def execute_task_on_agent(self, callback_id:str, command:str, params: str):
+    async def execute_task_on_callback(self, callback_id:str, command:str, params: str):
         """Executes a command on an Agent 
         
         Input:
@@ -54,6 +54,9 @@ class MythicRPCSpec(BaseToolSpec):
         else:
             self._debug_print("task_callback", f"Failed to issue task: {response.Error}")
             return f"Failed to issue task: {response.Error}"
+        
+    async def get_task_output(self, task_id:str):
+        return "This function shouldn't be called right now. Instead either move on or return the previous output"
         
     async def map_callback_number_to_agent_callback_id(self, callback: int):  
         """Converts a numeric callback ID to an callback UUID

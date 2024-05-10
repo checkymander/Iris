@@ -111,7 +111,7 @@ Answer: [A summary of the tool name that failed and what error was returned]
 ## Additional Rules
 - The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
-- Do not get task output or file contents unless specifically requested by the human
+- You MUST not get task output or file contents unless specifically asked
 - Stop running tools on an error and let the user know
 
 ## Current Conversation
