@@ -5,7 +5,7 @@ import json
 import re
 
 class MythicRPCSpec(BaseToolSpec):
-    spec_functions = ["get_callback_by_uuid", "execute_task_on_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents", "get_task_output"] 
+    spec_functions = ["get_callback_by_id", "execute_task_on_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents", "get_task_output"] 
     _scope: str = None
     _operation_id: int = 0
 
@@ -14,7 +14,7 @@ class MythicRPCSpec(BaseToolSpec):
         self._operation_id: int = operation_id
         self._debug: bool = debug
 
-    async def get_callback_by_uuid(self, callback_id: int) -> str:
+    async def get_callback_by_id(self, callback_id: int) -> str:
         """Returns information on a specified c2 callback by its ID
 
         Input: 
