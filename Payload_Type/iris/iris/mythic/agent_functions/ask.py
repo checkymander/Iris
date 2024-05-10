@@ -96,9 +96,8 @@ If this format is used, the user will respond in the following format:
 Observation: tool response
 ```
 
-You should keep repeating the above format until either you have enough information
-to answer the question without using any more tools, or an error is thrown by a tool you need to use. At that point, you MUST respond
-in the one of the following two formats:
+You should run the minimum number of tools until you have enough information to answer the question or an error is 
+thrown by a tool you need to use. At that point, you MUST respond in the one of the following two formats:
 
 ```
 Thought: I can answer without using any more tools.
