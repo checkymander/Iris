@@ -23,6 +23,10 @@ class MythicRPCSpec(BaseToolSpec):
         Output: Detailed information about the found callback or an error
         """
         id = await self._check_valid_id(callback_id)
+
+        if id is None:
+            return "Call back not found. Check to ensure you provided the callback_id specified by the user. Or let the user know that the callback ID was not valid."
+        
         self._debug_print("get_callback_by_uuid", f"Checking for callback id: {id}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
                                                         SearchCallbackUUID=id)
@@ -33,7 +37,7 @@ class MythicRPCSpec(BaseToolSpec):
             return response.Results[0].to_json()
         else:
             self._debug_print("get_callback_by_uuid", f"Callback not found: {response.Error}")
-            return "Call back not found."
+            return "Callback not found. Check to ensure you provided the callback_id specified by the user. Or let the user know that the callback ID was not valid."
     
     async def execute_task_on_callback(self, callback_id:str, command:str, params: str):
         """Executes a command on an Agent 
@@ -45,6 +49,10 @@ class MythicRPCSpec(BaseToolSpec):
             
         Output: Success or Failure"""
         id = await self._check_valid_id(callback_id)
+
+        if id is None:
+            return "Call back not found. Check to ensure you provided the callback_id specified by the user. Or let the user know that the callback ID was not valid."
+
         self._debug_print("task_callback", f"Executing command: {command} with params {params} on callback {id}")
         response = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=id, CommandName=command, Params=params))
 
@@ -104,9 +112,9 @@ class MythicRPCSpec(BaseToolSpec):
                     return id
             except:
                 self._debug_print("_check_valid_id", f"No valid UUID found")
-                return ""
+                return None
         self._debug_print("_check_valid_id", f"No valid UUID found")
-        return ""
+        return None
 
     async def get_dangerous_processes(self, Host:str):
         """Requests the process lists for a specified hostname and searches it for dangerous processes
