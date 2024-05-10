@@ -96,8 +96,8 @@ If this format is used, the user will respond in the following format:
 Observation: tool response
 ```
 
-You should keep repeating the above format until you have enough information
-to answer the question without using any more tools. At that point, you MUST respond
+You should keep repeating the above format until either you have enough information
+to answer the question without using any more tools, or an error is thrown by a tool you need to use. At that point, you MUST respond
 in the one of the following two formats:
 
 ```
@@ -114,6 +114,7 @@ Answer: Sorry, I cannot answer your query.
 - The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
 - Do not get task output or file contents unless specifically requested by the human
+- Stop running tools on an error and let the user know
 
 ## Current Conversation
 Below is the current conversation consisting of interleaving human and assistant messages.
