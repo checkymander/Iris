@@ -106,7 +106,7 @@ Answer: [your answer here]
 
 ```
 Thought: I cannot answer the question with the provided tools.
-Answer: [The error message]
+Answer: [The toolname that errored and the error message]
 ```
 
 ## Additional Rules
