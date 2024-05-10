@@ -14,7 +14,7 @@ class MythicRPCSpec(BaseToolSpec):
         self._operation_id: int = operation_id
         self._debug: bool = debug
 
-    async def get_callback_by_uuid(self, callback_id: str) -> str:
+    async def get_callback_by_uuid(self, callback_id: int) -> str:
         """Returns information on a specified c2 callback by its ID
 
         Input: 
@@ -39,7 +39,7 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("get_callback_by_uuid", f"Callback not found: {response.Error}")
             return "Callback not found. Check to ensure you provided the callback_id specified by the user. Or let the user know that the callback ID was not valid."
     
-    async def execute_task_on_callback(self, callback_id:str, command:str, params: str):
+    async def execute_task_on_callback(self, callback_id:int, command:str, params: str):
         """Executes a command on an Agent 
         
         Input:
