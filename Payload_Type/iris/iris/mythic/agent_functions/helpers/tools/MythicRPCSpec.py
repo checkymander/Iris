@@ -15,7 +15,7 @@ class MythicRPCSpec(BaseToolSpec):
         self._debug: bool = debug
 
     async def get_callback_by_uuid_async(self, callback_id: str) -> str:
-        """Finds a specific callback by its agent_callback_id (UUID) returns information about the callback
+        """Finds a specific callback by its callback ID returns information about the callback
 
         Input: 
             callback_id - The callback ID of the agent
@@ -56,7 +56,7 @@ class MythicRPCSpec(BaseToolSpec):
             return f"Failed to issue task: {response.Error}"
         
     async def map_callback_number_to_agent_callback_id(self, callback: int):  
-        """Converts a numeric callback ID to an Agent Callback UUID
+        """Converts a numeric callback ID to an callback UUID
         
         Input:
             callback - A numeric value representing the callback ID
@@ -131,7 +131,8 @@ class MythicRPCSpec(BaseToolSpec):
             return f"Error: {response.Error}"
 
     async def get_file_contents(self, filename: str) -> str:
-        """gets the contents of an uploaded file for summarization
+        """Gets the contents of an uploaded file for summarization
+            
             Input:
                 Filename - The name of the file or UUID to get the contents of
 

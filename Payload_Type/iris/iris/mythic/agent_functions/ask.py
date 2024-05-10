@@ -64,7 +64,6 @@ class AskCommand(CommandBase):
         )
 
         react_system_header_str = """\
-
 You are designed to help with a variety of tasks, from answering questions \
     to providing summaries to other types of analyses.
 
@@ -131,7 +130,6 @@ Below is the current conversation consisting of interleaving human and assistant
         ))
 
         response.Success = True
-        print("[+] Done.")
         await SendMythicRPCTaskUpdate(MythicRPCTaskUpdateMessage(
             TaskID=taskData.Task.ID,
             UpdateCompleted = True,
