@@ -115,6 +115,7 @@ Answer: Sorry, I cannot answer your query.
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
 - Do not get task output or file contents unless specifically requested by the human
 - Stop running tools on an error and let the user know
+- All Agent ID's should be in a UUID format provided by either the user or mapped via map_callback_number_to_agent_callback_id
 
 ## Current Conversation
 Below is the current conversation consisting of interleaving human and assistant messages.
