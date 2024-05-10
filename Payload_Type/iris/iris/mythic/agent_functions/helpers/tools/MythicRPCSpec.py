@@ -35,7 +35,7 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("get_callback_by_uuid_async", f"Callback not found: {response.Error}")
             return json.dumps({"message":"Callback Not Found"})
     
-    async def execute_task_on_agent(self, agent_callback_id:str, command:str, params: str):
+    async def execute_task_on_agent(self, callback_id:str, command:str, params: str):
         """Executes a command on an Agent 
         
         Input:
@@ -44,7 +44,7 @@ class MythicRPCSpec(BaseToolSpec):
             params - json string of parameter names and values
             
         Output: Success or Failure"""
-        id = await self._check_valid_id(agent_callback_id)
+        id = await self._check_valid_id(callback_id)
         self._debug_print("task_callback", f"Executing command: {command} with params {params} on callback {id}")
         response = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=id, CommandName=command, Params=params))
 
