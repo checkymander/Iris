@@ -90,7 +90,7 @@ Please ALWAYS start with a Thought.
 
 Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
 
-Action Input should only use information the user provided, or information retrieved from other tools
+If you don't have the right information for a tools input, ask the user, don't make it up.
 
 If this format is used, the user will respond in the following format:
 

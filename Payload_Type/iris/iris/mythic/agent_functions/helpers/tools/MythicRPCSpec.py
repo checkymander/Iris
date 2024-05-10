@@ -18,7 +18,7 @@ class MythicRPCSpec(BaseToolSpec):
         """Finds a specific callback by its agent_callback_id (UUID) returns information about the callback
 
         Input: 
-            agent_callback_id - Should be either a UUID or an int value specified by the user
+            agent_callback_id - Should be either a UUID or an int ID value specified by the user
 
         Output: Detailed information about the found callback or an error
         """
