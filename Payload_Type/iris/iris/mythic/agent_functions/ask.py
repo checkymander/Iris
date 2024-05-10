@@ -114,7 +114,6 @@ Answer: [A summary of the tool name that failed and what error was returned]
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
 - Do not get task output or file contents unless specifically requested by the human
 - Stop running tools on an error and let the user know
-- Callback and Agent can be used interchangeably and refers to agent_callback_id
 
 ## Current Conversation
 Below is the current conversation consisting of interleaving human and assistant messages.
