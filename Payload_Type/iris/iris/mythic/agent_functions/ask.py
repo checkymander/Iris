@@ -90,8 +90,6 @@ Please ALWAYS start with a Thought.
 
 Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
 
-If you don't have the right information for a tools input, ask the user, don't make it up.
-
 If this format is used, the user will respond in the following format:
 
 ```
@@ -116,7 +114,6 @@ Answer: [A summary of the tool name that failed and what error was returned]
 - You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
 - Do not get task output or file contents unless specifically requested by the human
 - Stop running tools on an error and let the user know
-- All Agent ID's should be in a UUID format provided by either the user or mapped via map_callback_number_to_agent_callback_id
 - Callback and Agent can be used interchangeably and refers to agent_callback_id
 
 ## Current Conversation
