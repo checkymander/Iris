@@ -5,7 +5,7 @@ import json
 import re
 
 class MythicRPCSpec(BaseToolSpec):
-    spec_functions = ["get_callback_by_uuid_async", "task_callback", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents"] 
+    spec_functions = ["get_callback_by_uuid_async", "execute_task_on_agent", "map_callback_number_to_agent_callback_id", "get_dangerous_processes", "get_file_contents"] 
     _scope: str = None
     _operation_id: int = 0
 
@@ -15,8 +15,13 @@ class MythicRPCSpec(BaseToolSpec):
         self._debug: bool = debug
 
     async def get_callback_by_uuid_async(self, agent_callback_id: str) -> str:
-        """Finds a specific callback by its agent_callback_id (UUID)"""
+        """Finds a specific callback by its agent_callback_id (UUID) returns information about the callback
 
+        Input: 
+            agent_callback_id - Should be either a UUID or an int value specified by the user
+
+        Output: Detailed information about the found callback or an error
+        """
         id = await self._check_valid_id(agent_callback_id)
         self._debug_print("get_callback_by_uuid_async", f"Checking for callback id: {id}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
@@ -30,8 +35,15 @@ class MythicRPCSpec(BaseToolSpec):
             self._debug_print("get_callback_by_uuid_async", f"Callback not found: {response.Error}")
             return json.dumps({"message":"Callback Not Found"})
     
-    async def task_callback(self, agent_callback_id:str, command:str, params: str):
-        """Executes a command on a callback specified by its agent_callback_id with parameters specified by a json string of parameter names and parameter values"""
+    async def execute_task_on_agent(self, agent_callback_id:str, command:str, params: str):
+        """Executes a command on an Agent 
+        
+        Input:
+            command - should be the name of a command
+            agent_callback_id - Should be either a UUID or an int value specified by the user
+            params - json string of parameter names and values
+            
+        Output: Success or Failure"""
         id = await self._check_valid_id(agent_callback_id)
         self._debug_print("task_callback", f"Executing command: {command} with params {params} on callback {id}")
         response = await SendMythicRPCTaskCreate(MythicRPCTaskCreateMessage(AgentCallbackID=id, CommandName=command, Params=params))
@@ -44,7 +56,13 @@ class MythicRPCSpec(BaseToolSpec):
             return f"Failed to issue task: {response.Error}"
         
     async def map_callback_number_to_agent_callback_id(self, callback: int):  
-        """Converts a numeric callback ID to an Agent Callback UUID"""
+        """Converts a numeric callback ID to an Agent Callback UUID
+        
+        Input:
+            callback - A numeric value representing the callback ID
+
+        Output: returns a UUID representing that callback ID
+        """
         self._debug_print("map_callback_number_to_agent_callback_id", f"Checking for callback id: {callback}")
         self._debug_print("map_callback_number_to_agent_callback_id", f"Agent scope: {self._scope}")
         search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=self._scope,
@@ -88,7 +106,13 @@ class MythicRPCSpec(BaseToolSpec):
         return ""
 
     async def get_dangerous_processes(self, Host:str):
-        """get a process list on the callback and search for dangerous processes such as MsMpEng and cmd"""
+        """Requests the process lists for a specified hostname and searches it for dangerous processes
+        
+            Input:
+                Host - the hostname of the computer to search
+
+            Output: A list of dangerous processes
+        """
         response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
         dangerous_processes = ["cmd(.exe)?", "msmpeng(.exe)?"]
         found_dangerous = []
@@ -107,7 +131,13 @@ class MythicRPCSpec(BaseToolSpec):
             return f"Error: {response.Error}"
 
     async def get_file_contents(self, filename: str) -> str:
-        """gets the contents of a file for summarization can be searched by either UUID or filename"""
+        """gets the contents of an uploaded file for summarization
+            Input:
+                Filename - The name of the file or UUID to get the contents of
+
+            Output:
+                The Contents of the file
+        """
         if self._is_valid_uuid(filename):
             id = filename
         else:

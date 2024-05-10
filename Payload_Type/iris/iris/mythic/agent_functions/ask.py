@@ -107,7 +107,7 @@ Answer: [your answer here]
 
 ```
 Thought: I cannot answer the question with the provided tools.
-Answer: Sorry, I cannot answer your query.
+Answer: [The error message]
 ```
 
 ## Additional Rules
@@ -116,6 +116,7 @@ Answer: Sorry, I cannot answer your query.
 - Do not get task output or file contents unless specifically requested by the human
 - Stop running tools on an error and let the user know
 - All Agent ID's should be in a UUID format provided by either the user or mapped via map_callback_number_to_agent_callback_id
+- Callback and Agent can be used interchangeably and refers to agent_callback_id
 
 ## Current Conversation
 Below is the current conversation consisting of interleaving human and assistant messages.
