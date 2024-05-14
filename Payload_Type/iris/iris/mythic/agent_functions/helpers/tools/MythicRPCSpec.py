@@ -116,30 +116,30 @@ class MythicRPCSpec(BaseToolSpec):
         self._debug_print("_check_valid_id", f"No valid UUID found")
         return None
 
-    async def get_dangerous_processes(self, Host:str):
-        """Requests the process lists for a specified hostname and searches it for dangerous processes
+   async def get_dangerous_processes(self, Host:str):
+    """Requests the process lists for a specified hostname and searches it for dangerous processes
         
-            Input:
-                Host - the hostname of the computer to search
+    Input:
+        Host - the hostname of the computer to search
 
-            Output: A list of dangerous processes
-        """
-        response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
-        dangerous_processes = ["cmd(.exe)?", "msmpeng(.exe)?"]
-        found_dangerous = []
-        if response.Success:
-                for x in response.Processes:
-                    self._debug_print("get_dangerous_processes", f"Testing {x.Name}")
-                    for y in dangerous_processes:
-                        if re.match(y,x):
-                            found_dangerous.append({x.ProcessID,x.Name})
-                            self._debug_print("get_dangerous_processes", f"{x.Name} is Dangerous")
-                if len(found_dangerous) > 0:
-                    return json.dumps(found_dangerous)
-                else:
-                    return "No Dangerous Processes Identified!"
+    Output: A list of dangerous processes
+    """
+    response = await SendMythicRPCProcessSearch(MythicRPCProcessSearchData(Host=Host))
+    dangerous_processes = ["cmd(.exe)?", "msmpeng(.exe)?"]
+    found_dangerous = []
+    if response.Success:
+        for x in response.Processes:
+            self._debug_print("get_dangerous_processes", f"Testing {x.Name}")
+            for y in dangerous_processes:
+                if re.match(y.lower(), x.Name.lower()):
+                    found_dangerous.append({x.ProcessID, x.Name})
+                    self._debug_print("get_dangerous_processes", f"{x.Name} is Dangerous")
+        if len(found_dangerous) > 0:
+            return json.dumps(found_dangerous)
         else:
-            return f"Error: {response.Error}"
+            return "No Dangerous Processes Identified!"
+    else:
+        return f"Error: {response.Error}"
 
     async def get_file_contents(self, filename: str) -> str:
         """Gets the contents of an uploaded file for summarization
