@@ -1,11 +1,6 @@
 from mythic_container.PayloadBuilder import *
 from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from huggingface_hub import hf_hub_download
-from llama_index.core import set_global_tokenizer
-import torch
 
 
 class Iris(PayloadType):
