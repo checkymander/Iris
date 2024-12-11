@@ -3,8 +3,10 @@ from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
 
 def get_callback_by_uuid(agent_callback_id: str) -> str:
-    #loop = asyncio.get_running_loop()
-    return asyncio.create_task(get_callback_by_uuid_async(agent_callback_id)).result()
+    loop = asyncio.get_running_loop()
+    task = loop.create_task(get_callback_by_uuid_async(agent_callback_id))
+    loop.run_until_complete(task)
+    return task.result()
     #return result.result()
 
 async def get_callback_by_uuid_async(agent_callback_id: str) -> str:
