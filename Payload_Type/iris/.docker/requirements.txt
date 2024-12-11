@@ -1,2 +1,3 @@
 google-generativeai
 mythic-container
+nest_asyncio
