@@ -35,6 +35,13 @@ class Iris(PayloadType):
             default_value="",
             description="Google Studio API Key"
         ),
+        BuildParameter(
+            name="model",
+            parameter_type=BuildParameterType.ChooseOne,
+            values = ["gemini-1.0-pro-latest", "gemini-1.5-pro-latest", "gemini-1.5-flash-latest", "gemini-2.0-flash-exp"],
+            default_value="gemini-2.0-flash-exp",
+            description="The model to use"
+        )    
         # BuildParameter(
         #     name="server",
         #     parameter_type=BuildParameterType.String,
