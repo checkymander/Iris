@@ -16,7 +16,27 @@ async def get_callback_by_uuid_async(agent_callback_id: str) -> str:
     search_message = MythicRPCCallbackSearchMessage(AgentCallbackUUID=agent_callback_id,
                                                     SearchCallbackUUID=agent_callback_id)
     response = await SendMythicRPCCallbackSearch(search_message)
+    
     if response.Success:
-        return json.dumps(response.Results[0])
+        result = response.Results[0]
+        response_str = f"""
+        ==============================================
+        {result.AgentCallbackID}
+        ==============================================
+        {result.AgentCallbackID=}
+        {result.Description=}
+        {result.User=}
+        {result.Host=}
+        {result.PID=}
+        {result.Ip=}
+        {result.ProcessName=}
+        {result.IntegrityLevel=}
+        {result.CryptoType=}
+        {result.Os=}
+        {result.Architecture=}
+        {result.Domain=}
+        ==============================================
+        """
+        return response_str
     else:
         return "Agent not found."
