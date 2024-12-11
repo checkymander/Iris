@@ -58,6 +58,7 @@ class AskCommand(CommandBase):
                 api_key = buildParam.Value
 
         if self.chat is None: 
+            logger.critical(f"Initiating chat param: models/{taskData.args.get_arg('mode')}")
             genai.configure(api_key=api_key)
             mythic_tools = {
                 "get_callback_by_uuid": get_callback_by_uuid,
@@ -68,7 +69,7 @@ class AskCommand(CommandBase):
                 f"models/{taskData.args.get_arg('model')}", tools = mythic_tools.values(), system_instruction=instruction
             )  
             self.chat = model.start_chat(enable_automatic_function_calling=True)
-            
+
         chat_response = self.chat.send_message(taskData.args.get_arg("question"))
         
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
