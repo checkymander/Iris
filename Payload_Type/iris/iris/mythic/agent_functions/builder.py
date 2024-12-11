@@ -38,7 +38,7 @@ class Iris(PayloadType):
         BuildParameter(
             name="model",
             parameter_type=BuildParameterType.ChooseOne,
-            values = ["gemini-1.0-pro-latest", "gemini-1.5-pro-latest", "gemini-1.5-flash-latest", "gemini-2.0-flash-exp"],
+            choices = ["gemini-1.0-pro-latest", "gemini-1.5-pro-latest", "gemini-1.5-flash-latest", "gemini-2.0-flash-exp"],
             default_value="gemini-2.0-flash-exp",
             description="The model to use"
         )    
