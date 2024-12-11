@@ -1,9 +1,16 @@
 from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
-from .helpers.tools.MythicRPCSpec import MythicRPCSpec
-from llama_index.llms.ollama import Ollama
-from llama_index.core.agent import ReActAgent
-from llama_index.core import PromptTemplate
+
+from .tools.CallbackTools import *
+import google.generativeai as genai
+from google.generativeai.types import content_types
+from collections.abc import Iterable
+
+def tool_config_from_mode(mode: str, fns: Iterable[str] = ()):
+    """Create a tool config with the specified function calling mode."""
+    return content_types.to_tool_config(
+        {"function_calling_config": {"mode": mode, "allowed_function_names": fns}}
+    )
 
 class AskArguments(TaskArguments):
     def __init__(self, command_line, **kwargs):
@@ -28,7 +35,6 @@ class AskArguments(TaskArguments):
                 self.command_line = self.command_line[1:-1]
             self.add_arg("question", self.command_line)
 
-
 class AskCommand(CommandBase):
     cmd = "ask"
     needs_admin = False
@@ -39,6 +45,7 @@ class AskCommand(CommandBase):
     argument_class = AskArguments
     attackmapping = []
     attributes = CommandAttributes()
+    chat = None
 
     async def create_go_tasking(self, taskData: PTTaskMessageAllData) -> PTTaskCreateTaskingMessageResponse:
         response = PTTaskCreateTaskingMessageResponse(
@@ -47,86 +54,25 @@ class AskCommand(CommandBase):
         )
 
         for buildParam in taskData.BuildParameters:
-            if buildParam.Name == "server":
-                llm_server = buildParam.Value
-            if buildParam.Name == "model":
-                selected_model = buildParam.Value
-            if buildParam.Name == "verbose":
-                debug_output = buildParam.Value
+            if buildParam.Name == "api_key":
+                api_key = buildParam.Value
 
-        llama = Ollama(
-            temperature=0,
-            verbose=debug_output,
-            model=selected_model,
-            #base_url= "https://xbbwlp7h-11434.use.devtunnels.ms",
-            base_url=llm_server,
-            #base_url= "http://localhost:11434"
+
+        genai.configure(api_key=api_key)
+        mythic_tools = {
+            "get_callback_by_uuid": get_callback_by_uuid,
+        }
+
+        instruction = "You are a helpful hacker assistant. You can perform actions that the user requests, and provide answers to questions they have based on the data provided to you by the server."
+        model = genai.GenerativeModel(
+            "models/gemini-2.0-experimental", tools = mythic_tools.values(), system_instruction=instruction
         )
-
-        react_system_header_str = """\
-You are designed to help with a variety of tasks, from answering questions \
-    to providing summaries to other types of analyses.
-
-## Tools
-You have access to a wide variety of tools. You are responsible for using
-the tools in any sequence you deem appropriate to complete the task at hand.
-This may require breaking the task into subtasks and using different tools
-to complete each subtask.
-
-You have access to the following tools:
-{tool_desc}
-
-## Output Format
-To answer the question, please use the following format.
-
-```
-Thought: I need to use a tool to help me answer the question.
-Action: tool name (one of {tool_names}) if using a tool.
-Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})
-```
-
-Please ALWAYS start with a Thought.
-
-Please use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}. 
-
-If this format is used, the user will respond in the following format:
-
-```
-Observation: tool response
-```
-
-You should run the minimum number of tools until you have enough information to answer the question or an error is 
-thrown by a tool you need to use. At that point, you MUST respond in the one of the following two formats:
-
-```
-Thought: I can answer without using any more tools.
-Answer: [your answer here]
-```
-
-```
-Thought: I cannot answer the question with the provided tools.
-Answer: [A summary of the tool name that failed and what error was returned]
-```
-
-## Additional Rules
-- The answer MUST contain a sequence of bullet points that explain how you arrived at the answer. This can include aspects of the previous conversation history.
-- You MUST obey the function signature of each tool. Do NOT pass in no arguments if the function expects arguments.
-- You MUST not get task output or file contents unless specifically asked
-- Stop running tools on an error and let the user know
-
-## Current Conversation
-Below is the current conversation consisting of interleaving human and assistant messages.
-
-"""
-        react_system_prompt = PromptTemplate(react_system_header_str)
-        mythic_spec = MythicRPCSpec(scope=taskData.Callback.AgentCallbackID, operation_id=taskData.Callback.OperationID,debug=debug_output)
-        agent = ReActAgent.from_tools(mythic_spec.to_tool_list(), llm=llama, verbose=True)
-        agent.update_prompts({"agent_worker:system_prompt": react_system_prompt})
-        agent.reset()
-        chat_response = await agent.achat(taskData.args.get_arg("question"))
+        self.chat = model.start_chat(enable_automatic_function_calling=True)
+        chat_response = self.chat.send_message(taskData.args.get_arg("question"))
+        
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
             TaskID=taskData.Task.ID,
-            Response=str(chat_response)
+            Response=str(chat_response.text)
         ))
 
         response.Success = True

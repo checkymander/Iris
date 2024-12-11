@@ -35,23 +35,29 @@ class Iris(PayloadType):
     ]
     build_parameters = [
         BuildParameter(
-            name="server",
+            name="api_key",
             parameter_type=BuildParameterType.String,
-            default_value="http://localhost:11434",
-            description="OpenAI Compatible LLM Server"
+            default_value="",
+            description="Google Studio API Key"
         ),
-        BuildParameter(
-            name="verbose",
-            parameter_type=BuildParameterType.Boolean,
-            default_value=False,
-            description="Enable verbose output in Docker container"
-        ),
-        BuildParameter(
-            name="model",
-            parameter_type=BuildParameterType.String,
-            default_value="llama3:instruct",
-            description="The model to use"
-        )
+        # BuildParameter(
+        #     name="server",
+        #     parameter_type=BuildParameterType.String,
+        #     default_value="http://localhost:11434",
+        #     description="OpenAI Compatible LLM Server"
+        # ),
+        # BuildParameter(
+        #     name="verbose",
+        #     parameter_type=BuildParameterType.Boolean,
+        #     default_value=False,
+        #     description="Enable verbose output in Docker container"
+        # ),
+        # BuildParameter(
+        #     name="model",
+        #     parameter_type=BuildParameterType.String,
+        #     default_value="llama3:instruct",
+        #     description="The model to use"
+        # )
     ]
     c2_profiles = []
     async def build(self) -> BuildResponse:
