@@ -2,7 +2,7 @@ import asyncio
 import nest_asyncio
 from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
-from iris_utils.async_helper import *
+from ..iris_utils.async_helper import *
 
 def get_callback_by_uuid(agent_callback_id: str) -> str:
     return run_async_function(get_callback_by_uuid_async, agent_callback_id)
