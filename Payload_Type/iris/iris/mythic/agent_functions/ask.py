@@ -52,12 +52,13 @@ class AskCommand(CommandBase):
             TaskID=taskData.Task.ID,
             Success=True,
         )
-
-        for buildParam in taskData.BuildParameters:
-            if buildParam.Name == "api_key":
-                api_key = buildParam.Value
-
         if self.chat is None: 
+            for buildParam in taskData.BuildParameters:
+                if buildParam.Name == "api_key":
+                    api_key = buildParam.Value
+                if buildParam.Name == "model":
+                    model_name = f"models/{buildParam.Value}"
+
             logger.critical(f"Initiating chat param: models/{taskData.args.get_arg('mode')}")
             genai.configure(api_key=api_key)
             mythic_tools = {
@@ -66,7 +67,7 @@ class AskCommand(CommandBase):
 
             instruction = "You are a helpful hacker assistant. You can perform actions that the user requests, and provide answers to questions they have based on the data provided to you by the server."
             model = genai.GenerativeModel(
-                f"models/{taskData.args.get_arg('model')}", tools = mythic_tools.values(), system_instruction=instruction
+                model_name, tools = mythic_tools.values(), system_instruction=instruction
             )  
             self.chat = model.start_chat(enable_automatic_function_calling=True)
 
