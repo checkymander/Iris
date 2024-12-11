@@ -1,0 +1,22 @@
+transformers
+sentence-transformers
+huggingface-hub
+langchain
+langchain-community
+ctransformers
+mythic-container == v0.4.14
+llama-index-embeddings-huggingface
+llama-index-llms-llama-cpp
+llama-index-readers-file
+llama-index-embeddings-openai
+llama-index-embeddings-langchain
+llama-index-llms-openai
+llama-index-readers-graphql
+llama-index
+llama-index-llms-ollama
+tiktoken
+gpt4all
+chromadb
+langchainhub
+langchain-text-splitters
+pydantic == 1.10.15
